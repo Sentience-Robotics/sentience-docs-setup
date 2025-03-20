@@ -90,9 +90,12 @@ To automatically back up your Docmost database every Monday at 8 PM (as describe
    ```
 2. Add the following line at the end of the file:
    ```sh
-   0 20 * * 1 ./save_backup.sh
+   0 20 * * 1 cd /home/ubuntu/doc/backup && ./save_backup.sh >> backups.log 2>&1
    ```
    - `0 20 * * 1` means the script will run at 20:00 (8 PM) every Monday.
+   - `cd /home/ubuntu/doc/backup &&` is mandatory to find .env
+   - `>> backups.log` append logs to backups.log
+   - `2>&1` redirects stderr to stdout
 
     **TODO** : voir pour avoir un fichier de log pour chaque backup
 3. Save and exit the editor.

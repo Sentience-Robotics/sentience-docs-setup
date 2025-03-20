@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo ""
+echo ""
+echo "-- Saving data in backup the $(date +"%d/%m") --"
+echo ""
+
 # Load environment variables from .env file
 set -a
 source ../.env
@@ -15,7 +20,7 @@ docker exec -i "$DB_CONTAINER" /bin/bash -c "PGPASSWORD=$PGPASSWORD pg_dump --us
 docker cp "$DOCMOST_CONTAINER":/app/data .
 
 # Create backup archive using tar
-BACKUP_FILENAME="docmost_backup_$(date +"%Y%m%d").tar.gz"
+BACKUP_FILENAME="docmost_backup_$(date +"%Y-%m-%d").tar.gz"
 tar -czf "$BACKUP_FILENAME" dump.sql data
 
 # Clean up temporary files
@@ -24,3 +29,5 @@ rm -rf data dump.sql
 echo "Backup completed: $BACKUP_FILENAME"
 
 rclone copy $BACKUP_FILENAME $RCLONE_REMOTE_NAME:$PROTON_DRIVE_BACKUP_DIRECTORY
+
+echo "Backup stored in Proton Drive"
