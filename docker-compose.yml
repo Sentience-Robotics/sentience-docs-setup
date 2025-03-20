@@ -48,7 +48,21 @@ services:
     volumes:
       - redis_data:/data
 
+  caddy:
+    image: caddy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+
 volumes:
   docmost:
   db_data:
   redis_data:
+  caddy_file:
+  caddy_data:
+  caddy_config:

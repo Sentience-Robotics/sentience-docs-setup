@@ -66,6 +66,7 @@ Once these prerequisites are installed and configured, you can proceed with inst
 To start Docmost, use the `docker-compose.yml` file. Before running it, make sure you have set the required environment variables:
 
 - `APP_URL`: The base URL of your Docmost instance.
+- 
 - `PG_PASSWORD`: The PostgreSQL password.
 
 ### Running the Script
