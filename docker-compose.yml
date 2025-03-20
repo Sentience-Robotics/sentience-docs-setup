@@ -1,0 +1,54 @@
+services:
+  docmost:
+    container_name: docmost_instance
+    image: docmost/docmost:latest
+    depends_on:
+      - db
+      - redis
+    environment:
+      APP_URL: ${APP_URL} #'https://docs.sentience-robotics.tech'
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: "postgresql://docmost:${PG_PASSWORD}@db:5432/docmost?schema=public"
+      REDIS_URL: 'redis://redis:6379'
+      MAIL_DRIVER: 'smtp'
+      SMTP_HOST: 'mail.smtp2go.com'
+      SMTP_PORT: 2525
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_SECURE: false
+      MAIL_FROM_ADDRESS: 'no-reply@sentience-robotics.tech'
+      MAIL_FROM_NAME: 'Sentience'
+      STORAGE_DRVIER: 'local'
+      FILE_UPLOAD_SIZE_LIMIT: '100mb'
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - docmost:/app/data/storage
+
+  db:
+    container_name: postgresql_instance
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: docmost
+      POSTGRES_USER: docmost
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis_instance
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  docmost:
+  db_data:
+  redis_data:

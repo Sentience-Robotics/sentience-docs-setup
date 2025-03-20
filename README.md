@@ -1,8 +1,10 @@
 # Docmost Installation Guide
 
+This guide will show you how to install **Docmost** on your machine, using **Docker**, **Rclone** and **crontab** to setup weekly backups for your instance
+
 ## Prerequisites
 
-Before installing Docmost, ensure that the `.env.template` file is properly completed and configured. You will need to rename it to `.env` and fill in the necessary values before proceeding with the installation process.
+Before installing Docmost, ensure that the `.env.template` file is properly completed and configured. All the purposes of the variables are defined inside the template file.
 
 Additionally, make sure the following tools are installed on your machine:
 
@@ -20,7 +22,7 @@ Docmost requires Docker to function properly. Follow the official instructions t
 
 ### Rclone
 
-Rclone is a tool for syncing and managing files in cloud storage.
+Rclone is a tool for syncing and managing files in cloud storage. It will allow you to store your backups on your **Proton Drive** account.
 
 **Installation:**
 ```sh
@@ -35,10 +37,18 @@ After installing Rclone, follow these steps to configure it for Proton Drive:
    ```sh
    rclone config
    ```
+2. Enter **n** to create a new remote.
 2. Give a name to the remote: use the same name as specified in the `.env` file for `RCLONE_REMOTE_NAME`.
+3. Then, a list of configurations should appear, you need to enter **Proton Drive** id (which is as of today **43** or **protondrive**)
 3. Enter your username and password, leaving the rest of the settings as default.
 
-⚠️ **Warning:** After setting up your credentials, you must first log in to your account via a browser using EXACTLY the same credentials. Otherwise, you may encounter an error requiring you to validate a captcha.
+<div style="border: 2px solid red; padding: 10px;">
+<strong>Warning:</strong> After setting up your credentials, you must first log in to your account via a browser using <strong>EXACTLY</strong> the same credentials as the one you provided. Otherwise, you may encounter an error requiring you to validate a captcha.
+</div>
+
+<div style="border: 2px solid orange; padding: 10px; margin-top: 10px;">
+<strong>Note:</strong> If you cannot see <strong>Proton Drive</strong> in the list of configurations available, verify your Rclone version. You need to have Rclone in a beta version as <strong>Proton Drive</strong> is currently a beta feature.
+</div>
 
 ### Testing the Setup
 
@@ -47,28 +57,29 @@ To verify that Rclone is correctly set up, run:
 rclone ls $RCLONE_REMOTE_NAME:
 ```
 
+A list of the files stored in your **Proton Drive** account should appear.
+
 Once these prerequisites are installed and configured, you can proceed with installing Docmost.
 
 ## Setting up Docmost with `start_docker.sh`
 
-To start Docmost, use the `start_docker.sh` script. Before running it, make sure you have set the required environment variables:
+To start Docmost, use the `docker-compose.yml` file. Before running it, make sure you have set the required environment variables:
 
 - `APP_URL`: The base URL of your Docmost instance.
-- `PG_USER`: The PostgreSQL username.
 - `PG_PASSWORD`: The PostgreSQL password.
 
 ### Running the Script
 
 Once the environment variables are set, execute the following command:
 ```sh
-./start_docker.sh
+docker compose up -d
 ```
 
-This will initialize and launch Docmost using Docker.
+This will initialize **Docmost** and **PostgreSQL** using Docker.
 
 ## Setting up a Cron Job for Database Backup
 
-To automatically back up the database every Monday at 8 PM (as described in the below example), you need to create a cron job that runs `save_backup.sh`.
+To automatically back up your Docmost database every Monday at 8 PM (as described in the below example), you need to create a cron job that runs `save_backup.sh`.
 
 ### Adding the Cron Job
 
@@ -78,7 +89,7 @@ To automatically back up the database every Monday at 8 PM (as described in the 
    ```
 2. Add the following line at the end of the file:
    ```sh
-   0 20 * * 1 ./save_backup.sh >> /var/log/db_backup.log 2>&1
+   0 20 * * 1 ./save_backup.sh
    ```
    - `0 20 * * 1` means the script will run at 20:00 (8 PM) every Monday.
 
