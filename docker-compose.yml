@@ -16,7 +16,7 @@ services:
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_SECURE: false
-      MAIL_FROM_ADDRESS: 'no-reply@sentience-robotics.tech'
+      MAIL_FROM_ADDRESS: 'no-reply@sentience-robotics.fr'
       MAIL_FROM_NAME: 'Sentience'
       STORAGE_DRVIER: 'local'
       FILE_UPLOAD_SIZE_LIMIT: '100mb'

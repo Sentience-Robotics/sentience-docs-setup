@@ -126,3 +126,12 @@ Execute the following command, replacing `<backup-file.tar.gz>` with the actual 
 - The restore process will replace the current database with the backup version.
 
 Now, you can use `restore_backup.sh` to revert to a specific backup whenever necessary.
+
+### Troubleshooting:
+
+- Error processing file upload. (error 400 in console)
+  ```bash
+  docker exec -u 0 -it docmost_instance sh
+  chown -R 1000:1000 /app/data/storage
+  ```
+
