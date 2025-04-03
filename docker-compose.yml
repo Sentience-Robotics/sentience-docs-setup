@@ -6,7 +6,7 @@ services:
       - db
       - redis
     environment:
-      APP_URL: ${APP_URL} #'https://docs.sentience-robotics.tech'
+      APP_URL: ${APP_URL}
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: "postgresql://docmost:${PG_PASSWORD}@db:5432/docmost?schema=public"
       REDIS_URL: 'redis://redis:6379'
