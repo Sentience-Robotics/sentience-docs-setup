@@ -1,0 +1,5 @@
+.env
+*.tar.gz
+*.zip
+*.swp
+*.log

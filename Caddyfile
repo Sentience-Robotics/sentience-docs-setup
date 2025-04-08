@@ -1,0 +1,3 @@
+https://docs.sentience-robotics.fr {
+    reverse_proxy * http://docmost:3000
+}
