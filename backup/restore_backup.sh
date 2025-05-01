@@ -23,7 +23,7 @@ DATA_DIR="data"
 DUMP_FILE="dump.sql"
 
 if [ ! -f "$BACKUP_ARCHIVE" ]; then
-    echo "Error : the file $BACKUP_ARCHIVE does not exists."
+    echo "Error: the file $BACKUP_ARCHIVE does not exists."
     exit 1
 fi
 
@@ -31,7 +31,7 @@ mkdir -p "$BACKUP_DIR"
 tar -xzf "$BACKUP_ARCHIVE" -C "$BACKUP_DIR"
 
 if [ ! -f "$BACKUP_DIR/$DUMP_FILE" ] || [ ! -d "$BACKUP_DIR/$DATA_DIR" ]; then
-    echo "Error : sthe archive does not contain $DUMP_FILE and/or the folder $DATA_DIR."
+    echo "Error: the archive does not contain $DUMP_FILE and/or the folder $DATA_DIR."
     rm -rf "$BACKUP_DIR"
     exit 1
 fi
