@@ -1,4 +1,4 @@
-# Docmost Installation Guide
+# Docmost Installation with Backups
 
 This guide will show you how to install **Docmost** on your machine, using **Docker**.
 Additionally, you can use **Rclone** and **crontab** to setup weekly backups for your instance in Proton drive.
