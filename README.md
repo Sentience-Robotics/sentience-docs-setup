@@ -1,18 +1,25 @@
 # Docmost Installation Guide
 
-This guide will show you how to install **Docmost** on your machine, using **Docker**, **Rclone** and **crontab** to setup weekly backups for your instance
+This guide will show you how to install **Docmost** on your machine, using **Docker**.
+Additionally, you can use **Rclone** and **crontab** to setup weekly backups for your instance in Proton drive.
 
 ## Prerequisites
 
-Before installing Docmost, ensure that the `.env.template` file is properly completed and configured. All the purposes of the variables are defined inside the template file.
+Before installing Docmost, create a `.env` file from the `.env.template` file and fill it. All the purposes of the variables are defined inside the template file.
 
 Additionally, make sure the following tools are installed on your machine:
 
 - `zip`
 - `unzip`
 - `docker`
-- `rclone`
-- `crontab`
+- `rclone` (optional)
+- `crontab` (optional)
+
+### Required environment variables
+
+- `APP_URL`: The base URL of your Docmost instance.
+- `APP_SECRET`: The secret of docmost, you can generate one using `openssl rand -hex 32`.
+- `PG_PASSWORD`: The PostgreSQL password.
 
 ### Docker
 
@@ -20,7 +27,7 @@ Docmost requires Docker to function properly. Follow the official instructions t
 
 [Docker Installation Guide](https://docs.docker.com/get-docker/)
 
-### Rclone
+### Rclone (optional)
 
 Rclone is a tool for syncing and managing files in cloud storage. It will allow you to store your backups on your **Proton Drive** account.
 
@@ -28,6 +35,15 @@ Rclone is a tool for syncing and managing files in cloud storage. It will allow 
 ```sh
 sudo -v ; curl https://rclone.org/install.sh | sudo bash -s beta
 ```
+
+## Run instance
+
+Once the environment variables are set, execute the following command:
+```sh
+docker compose up -d
+```
+
+This will initialize **Docmost** and **PostgreSQL** using Docker.
 
 ## Setting up Rclone to Access Proton Drive
 
@@ -60,23 +76,6 @@ rclone ls $RCLONE_REMOTE_NAME:
 A list of the files stored in your **Proton Drive** account should appear.
 
 Once these prerequisites are installed and configured, you can proceed with installing Docmost.
-
-## Setting up Docmost with `start_docker.sh`
-
-To start Docmost, use the `docker-compose.yml` file. Before running it, make sure you have set the required environment variables:
-
-- `APP_URL`: The base URL of your Docmost instance.
-- 
-- `PG_PASSWORD`: The PostgreSQL password.
-
-### Running the Script
-
-Once the environment variables are set, execute the following command:
-```sh
-docker compose up -d
-```
-
-This will initialize **Docmost** and **PostgreSQL** using Docker.
 
 ## Setting up a Cron Job for Database Backup
 
@@ -121,13 +120,13 @@ Execute the following command, replacing `<backup-file.tar.gz>` with the actual 
 ./restore_backup.sh /path/to/<backup-file.tar.gz>
 ```
 
-### Notes:
+## Notes:
 - Ensure that the backup file exists and is accessible before running the script.
 - The restore process will replace the current database with the backup version.
 
 Now, you can use `restore_backup.sh` to revert to a specific backup whenever necessary.
 
-### Troubleshooting:
+## Troubleshooting:
 
 - Error processing file upload. (error 400 in console)
   ```bash
@@ -135,3 +134,6 @@ Now, you can use `restore_backup.sh` to revert to a specific backup whenever nec
   chown -R 1000:1000 /app/data/storage
   ```
 
+## Example
+
+This repo is used for our personnal use, you can see the public part of our documentation [here](https://docs.sentience-robotics.fr/share/e5am4eomgv/p/communication-7LgCFSu60p)
