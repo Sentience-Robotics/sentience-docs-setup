@@ -120,13 +120,13 @@ Execute the following command, replacing `<backup-file.tar.gz>` with the actual 
 ./restore_backup.sh /path/to/<backup-file.tar.gz>
 ```
 
-### Notes:
+## Notes:
 - Ensure that the backup file exists and is accessible before running the script.
 - The restore process will replace the current database with the backup version.
 
 Now, you can use `restore_backup.sh` to revert to a specific backup whenever necessary.
 
-### Troubleshooting:
+## Troubleshooting:
 
 - Error processing file upload. (error 400 in console)
   ```bash
@@ -134,3 +134,6 @@ Now, you can use `restore_backup.sh` to revert to a specific backup whenever nec
   chown -R 1000:1000 /app/data/storage
   ```
 
+## Example
+
+This repo is used for our personnal use, you can see the public part of our documentation [here](https://docs.sentience-robotics.fr/share/e5am4eomgv/p/communication-7LgCFSu60p)
