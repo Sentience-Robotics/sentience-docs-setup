@@ -15,9 +15,7 @@ Additionally, make sure the following tools are installed on your machine:
 - `rclone` (optional)
 - `crontab` (optional)
 
-### .env
-
-Make sure you have set the required environment variables:
+### Required environment variables
 
 - `APP_URL`: The base URL of your Docmost instance.
 - `APP_SECRET`: The secret of docmost, you can generate one using `openssl rand -hex 32`.
