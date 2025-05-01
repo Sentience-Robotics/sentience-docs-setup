@@ -4,6 +4,8 @@
 # This is a script to save a backup of your docmost instance because a official way is not implemented yet.
 # Source: https://github.com/Sentience-Robotics/sentience-docs-setup/tree/master/backup
 
+set -e
+
 echo ""
 echo ""
 echo "-- Saving data in backup the $(date +"%d/%m") --"

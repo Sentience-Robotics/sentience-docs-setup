@@ -4,6 +4,7 @@
 # This is a script to restore a backup of your docmost instance.
 # Source: https://github.com/Sentience-Robotics/sentience-docs-setup/tree/master/backup
 
+set -e
 
 echo "/!\\ Restoring backup will only work with the same docmost version it was saved on.\n You can still use your old backup with a recent docmost version by first restoring it in the old version and then upgrading docmost (it will migrate the database properly)"
 
