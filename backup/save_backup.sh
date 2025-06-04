@@ -22,15 +22,35 @@ docker exec -i "$DB_CONTAINER_NAME" /bin/bash -c "PGPASSWORD=$PGPASSWORD pg_dump
 # Backup data folder
 docker cp "$DOCMOST_CONTAINER_NAME":/app/data .
 
+# Backup docmost version
+echo $(docker compose images docmost | awk 'NR==2 {print $3}') > version.txt
+
 # Create backup archive using tar
-BACKUP_FILENAME="docmost_backup_$(date +"%Y-%m-%d").tar.gz"
-tar -czf "$BACKUP_FILENAME" dump.sql data
+BACKUP_COMPRESSION="--zstd -cf"
+BACKUP_EXTENSION=".tar.zst"
+BACKUP_FILENAME="docmost_backup_$(date +"%Y-%m-%d")$BACKUP_EXTENSION"
+tar $BACKUP_COMPRESSION "$BACKUP_FILENAME" dump.sql data version.txt
 
 # Clean up temporary files
-rm -rf data dump.sql
+rm -rf data dump.sql version.txt
 
 echo "Backup completed: $BACKUP_FILENAME"
+
+age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
+rsync --progress --inplace --checksum "$BACKUP_FILENAME.age" /mnt/hetzner/docmost-backups/ && rm "$BACKUP_FILENAME.age"
+
 if [ "USE_RCLONE" = "true" ]; then
   rclone copy $BACKUP_FILENAME $RCLONE_REMOTE_NAME:$PROTON_DRIVE_BACKUP_DIRECTORY
   echo "Backup stored in Proton Drive"
+fi
+
+OLD_DATE=$(date -d "1 month ago" +'%Y-%m-%d')
+OLD_BACKUP_FILENAME="docmost_backup_${OLD_DATE}$BACKUP_EXTENSION"
+
+# Delete the old file if it exists
+if [ -f "$OLD_BACKUP_FILENAME" ]; then
+    echo "Deleting old backup: $OLD_BACKUP_FILENAME"
+    rm "$OLD_BACKUP_FILENAME"
+else
+    echo "Old backup not found: $OLD_BACKUP_FILENAME"
 fi

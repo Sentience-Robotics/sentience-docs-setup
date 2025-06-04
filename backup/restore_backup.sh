@@ -29,7 +29,7 @@ if [ ! -f "$BACKUP_ARCHIVE" ]; then
 fi
 
 mkdir -p "$BACKUP_DIR"
-tar -xzf "$BACKUP_ARCHIVE" -C "$BACKUP_DIR"
+tar -xf "$BACKUP_ARCHIVE" -C "$BACKUP_DIR"
 
 if [ ! -f "$BACKUP_DIR/$DUMP_FILE" ] || [ ! -d "$BACKUP_DIR/$DATA_DIR" ]; then
     echo "Error: the archive does not contain $DUMP_FILE and/or the folder $DATA_DIR."
