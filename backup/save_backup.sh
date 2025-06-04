@@ -37,7 +37,7 @@ rm -rf data dump.sql version.txt
 echo "Backup completed: $BACKUP_FILENAME"
 
 age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
-rsync --progress --inplace --checksum "$BACKUP_FILENAME.age" /mnt/hetzner/docmost-backups/ && rm "$BACKUP_FILENAME.age"
+rsync --progress --inplace --checksum "$BACKUP_FILENAME.age" $MOUNTED_DRIVE_CONFIGURATION && rm "$BACKUP_FILENAME.age"
 
 if [ "USE_RCLONE" = "true" ]; then
   rclone copy $BACKUP_FILENAME $RCLONE_REMOTE_NAME:$PROTON_DRIVE_BACKUP_DIRECTORY
