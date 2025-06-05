@@ -28,29 +28,38 @@ echo $(docker compose images docmost | awk 'NR==2 {print $3}') > version.txt
 # Create backup archive using tar
 BACKUP_COMPRESSION="--zstd -cf"
 BACKUP_EXTENSION=".tar.zst"
-BACKUP_FILENAME="docmost_backup_$(date +"%Y-%m-%d")$BACKUP_EXTENSION"
-tar $BACKUP_COMPRESSION "$BACKUP_FILENAME" dump.sql data version.txt
 
+cp -r "./"* $LOCAL_GIT_BACKUP_FOLDER
 # Clean up temporary files
 rm -rf data dump.sql version.txt
 
-echo "Backup completed: $BACKUP_FILENAME"
+cd $LOCAL_GIT_BACKUP_FOLDER
+git add -A
 
-age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
-rsync --progress --inplace --checksum "$BACKUP_FILENAME.age" $MOUNTED_DRIVE_CONFIGURATION && rm "$BACKUP_FILENAME.age"
+if ! git diff --cached --quiet; then
+    git commit -m "backup"
 
-if [ "USE_RCLONE" = "true" ]; then
-  rclone copy $BACKUP_FILENAME $RCLONE_REMOTE_NAME:$PROTON_DRIVE_BACKUP_DIRECTORY
-  echo "Backup stored in Proton Drive"
-fi
+    BACKUP_FILENAME="docmost_backup$BACKUP_EXTENSION"
+    cd -
+    cd $HOME
+    tar $BACKUP_COMPRESSION $BACKUP_FILENAME backups
 
-OLD_DATE=$(date -d "1 month ago" +'%Y-%m-%d')
-OLD_BACKUP_FILENAME="docmost_backup_${OLD_DATE}$BACKUP_EXTENSION"
 
-# Delete the old file if it exists
-if [ -f "$OLD_BACKUP_FILENAME" ]; then
-    echo "Deleting old backup: $OLD_BACKUP_FILENAME"
-    rm "$OLD_BACKUP_FILENAME"
+    age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
+    rsync --progress --inplace --no-whole-file --checksum "$BACKUP_FILENAME.age" $MOUNTED_DRIVE_CONFIGURATION
+    mv "$BACKUP_FILENAME.age" "$BACKUP_FILENAME.age.copy"
+    rsync --progress --inplace --no-whole-file --checksum "$BACKUP_FILENAME.age.copy" $MOUNTED_DRIVE_CONFIGURATION
+    rm "$BACKUP_FILENAME.age.copy"
+
+    if [ "USE_RCLONE" = "true" ]; then
+        rclone copy $BACKUP_FILENAME $RCLONE_REMOTE_NAME:$PROTON_DRIVE_BACKUP_DIRECTORY
+        echo "Backup stored in Proton Drive"
+    fi
+
+    rm "$BACKUP_FILENAME"
+
 else
-    echo "Old backup not found: $OLD_BACKUP_FILENAME"
+    echo "Nothing to commit for $archive"
 fi
+
+echo "Backup completed: $BACKUP_FILENAME"
