@@ -30,6 +30,7 @@ BACKUP_COMPRESSION="--zstd -cf"
 BACKUP_EXTENSION=".tar.zst"
 
 cp -r "./"* $LOCAL_GIT_BACKUP_FOLDER
+cp ../docker-compose.yml $LOCAL_GIT_BACKUP_FOLDER
 # Clean up temporary files
 rm -rf data dump.sql version.txt
 
