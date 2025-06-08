@@ -29,8 +29,7 @@ echo $(docker compose images docmost | awk 'NR==2 {print $3}') > version.txt
 BACKUP_COMPRESSION="--zstd -cf"
 BACKUP_EXTENSION=".tar.zst"
 
-cp -r "./"* $LOCAL_GIT_BACKUP_FOLDER
-cp ../docker-compose.yml $LOCAL_GIT_BACKUP_FOLDER
+cp -r "../"* $LOCAL_GIT_BACKUP_FOLDER
 # Clean up temporary files
 rm -rf data dump.sql version.txt
 
@@ -43,7 +42,7 @@ if ! git diff --cached --quiet; then
     BACKUP_FILENAME="docmost_backup$BACKUP_EXTENSION"
     cd -
     cd $HOME
-    tar $BACKUP_COMPRESSION $BACKUP_FILENAME backups
+    tar $BACKUP_COMPRESSION $BACKUP_FILENAME -C backups .
 
 
     age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME

@@ -31,7 +31,7 @@ fi
 mkdir -p "$BACKUP_DIR"
 tar -xf "$BACKUP_ARCHIVE" -C "$BACKUP_DIR"
 
-if [ ! -f "$BACKUP_DIR/$DUMP_FILE" ] || [ ! -d "$BACKUP_DIR/$DATA_DIR" ]; then
+if [ ! -f "$BACKUP_DIR/backup/$DUMP_FILE" ] || [ ! -d "$BACKUP_DIR/backup/$DATA_DIR" ]; then
     echo "Error: the archive does not contain $DUMP_FILE and/or the folder $DATA_DIR."
     rm -rf "$BACKUP_DIR"
     exit 1
@@ -41,10 +41,10 @@ echo "Resetting the public schema..."
 docker exec -it $DB_CONTAINER_NAME psql -U docmost -d docmost -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 
 echo "Copying data into the container..."
-docker cp "$BACKUP_DIR/$DATA_DIR" "$DOCMOST_CONTAINER_NAME":/app/
+docker cp "$BACKUP_DIR/backup/$DATA_DIR" "$DOCMOST_CONTAINER_NAME":/app/
 
 echo "Restoring the database..."
-cat "$BACKUP_DIR/$DUMP_FILE" | docker exec -i $DB_CONTAINER_NAME psql -U docmost -d docmost
+cat "$BACKUP_DIR/backup/$DUMP_FILE" | docker exec -i $DB_CONTAINER_NAME psql -U docmost -d docmost
 
 rm -rf "$BACKUP_DIR"
 
