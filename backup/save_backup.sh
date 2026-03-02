@@ -46,9 +46,9 @@ if ! git diff --cached --quiet; then
 
 
     age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
-    rsync --progress --inplace --no-whole-file --checksum "$BACKUP_FILENAME.age" $MOUNTED_DRIVE_CONFIGURATION
+    rclone copy "$BACKUP_FILENAME.age" pcloud:/
     mv "$BACKUP_FILENAME.age" "$BACKUP_FILENAME.age.copy"
-    rsync --progress --inplace --no-whole-file --checksum "$BACKUP_FILENAME.age.copy" $MOUNTED_DRIVE_CONFIGURATION
+    rclone copy "$BACKUP_FILENAME.age.copy" pcloud:/
     rm "$BACKUP_FILENAME.age.copy"
 
     if [ "USE_RCLONE" = "true" ]; then
