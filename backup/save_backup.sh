@@ -6,6 +6,10 @@
 
 set -e
 
+# Catch any local errors
+NOTIFIER_SCRIPT="$(pwd)/discord_notifier.sh"
+trap '"$NOTIFIER_SCRIPT" error local' ERR
+
 echo ""
 echo ""
 echo "-- Saving data in backup the $(date +"%d/%m") --"
@@ -40,12 +44,14 @@ if ! git diff --cached --quiet; then
     git commit -m "backup"
 
     BACKUP_FILENAME="docmost_backup$BACKUP_EXTENSION"
-    cd -
+    cd - > /dev/null
     cd $HOME
     tar $BACKUP_COMPRESSION $BACKUP_FILENAME -C backups .
 
-
     age -r $ENCRYPT_PUB_KEY -o "$BACKUP_FILENAME.age" $BACKUP_FILENAME
+
+    trap '"$NOTIFIER_SCRIPT" error cloud' ERR
+
     rclone copy "$BACKUP_FILENAME.age" pcloud:/
     mv "$BACKUP_FILENAME.age" "$BACKUP_FILENAME.age.copy"
     rclone copy "$BACKUP_FILENAME.age.copy" pcloud:/
@@ -59,7 +65,10 @@ if ! git diff --cached --quiet; then
     rm "$BACKUP_FILENAME"
 
 else
-    echo "Nothing to commit for $archive"
+    echo "Nothing to commit for $LOCAL_GIT_BACKUP_FOLDER"
 fi
 
 echo "Backup completed: $BACKUP_FILENAME"
+
+trap - ERR
+"$NOTIFIER_SCRIPT" success
