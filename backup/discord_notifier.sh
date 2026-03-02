@@ -4,7 +4,7 @@
 STATUS=$1
 PHASE=$2
 
-# Reliably find the directory where THIS script is located
+# Find the directory where this script is located (ensure .env is found)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Load environment variables using the absolute path
@@ -71,7 +71,7 @@ JSON_PAYLOAD=$(cat <<EOF
 EOF
 )
 
-# 4. The Safety Net: Send and verify HTTP response code
+# 4. Send and verify HTTP response code
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD" "$DISCORD_WEBHOOK_URL")
 
 # If Discord rejects the payload (e.g., 400 Bad Request) or curl fails (000)
